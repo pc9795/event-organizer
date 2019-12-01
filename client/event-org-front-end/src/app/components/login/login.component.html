@@ -1,0 +1,12 @@
+<div class="container">
+  <form #loginForm="ngForm">
+    <input type="text" placeholder="Username" class="form-control" id="username" required [(ngModel)]="model.username"
+           name="username">
+    <div [hidden]="username.valid || username.pristine" class="alert alert-danger">Username is required</div>
+    <input type="password" placeholder="Password" class="form-control" id="password" required
+           [(ngModel)]="model.password" name="password">
+    <div [hidden]="password.valid || password.pristine" class="alert alert-danger">Password is required</div>
+    <button type="submit" class="btn btn-success">Submit</button>
+  </form>
+</div>
+{{diagnostic}}
