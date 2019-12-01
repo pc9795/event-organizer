@@ -19,7 +19,7 @@ import javax.sql.DataSource;
 /**
  * Created By: Prashant Chaubey
  * Created On: 29-11-2019 14:35
- * Purpose: TODO:
+ * Purpose: Authorization and Authentication by spring security.
  **/
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -33,29 +33,46 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         this.userService = userService;
     }
 
+    /**
+     * Configure spring security settings for the url accesses.
+     *
+     * @param http
+     * @throws Exception
+     */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        //Disable csrf and handle authentication failure
         http.csrf().disable().exceptionHandling().authenticationEntryPoint(
                 (request, response, authException) ->
                         Utils.createJSONErrorResponse(HttpServletResponse.SC_UNAUTHORIZED,
                                 Constants.ErrorMsg.UNAUTHORIZED, response)
-
-        ).accessDeniedHandler(
+        ).accessDeniedHandler( //Handles forbidden access
                 ((request, response, accessDeniedException) ->
                         Utils.createJSONErrorResponse(HttpServletResponse.SC_FORBIDDEN,
                                 Constants.ErrorMsg.FORBIDDEN_RESOURCE, response))
-        ).and().authorizeRequests().antMatchers("/api/v1/events/**").authenticated().
-                and().logout().permitAll().logoutSuccessHandler(
+        ).and().authorizeRequests().antMatchers("/api/v1/events/**").authenticated(). //Authenticate all requests for events.
+                and().logout().permitAll().logoutSuccessHandler( //Add logout functionality given by spring security
                 (request, response, authentication) -> new HttpStatusReturningLogoutSuccessHandler()
         );
     }
 
+    /**
+     * Enables jdbc authentication
+     *
+     * @param auth
+     * @throws Exception
+     */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userService).passwordEncoder(encoder()).and().jdbcAuthentication().
                 dataSource(dataSource);
     }
 
+    /**
+     * Hashing for passwords.
+     *
+     * @return
+     */
     @Bean
     public PasswordEncoder encoder() {
         return new BCryptPasswordEncoder();

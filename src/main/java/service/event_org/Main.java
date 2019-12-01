@@ -8,7 +8,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 /**
  * Created By: Prashant Chaubey
  * Created On: 29-11-2019 14:33
- * Purpose: TODO:
+ * Purpose: Entry point of the application
  **/
 @EnableSwagger2
 @EnableWebSecurity

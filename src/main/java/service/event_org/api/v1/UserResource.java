@@ -42,7 +42,7 @@ public class UserResource {
     public User getUser(@PathVariable("user_id") long userId) throws ResourceNotFoundException {
         User user = userRepository.findById(userId);
         if (user == null) {
-            throw new ResourceNotFoundException();
+            throw new ResourceNotFoundException(String.format("User id:%s", userId));
         }
         return user;
     }

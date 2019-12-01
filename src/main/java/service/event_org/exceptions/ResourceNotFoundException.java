@@ -3,7 +3,7 @@ package service.event_org.exceptions;
 /**
  * Created By: Prashant Chaubey
  * Created On: 30-11-2019 18:26
- * Purpose: TODO:
+ * Purpose: Exception when a requested resource is not found.
  **/
 public class ResourceNotFoundException extends Exception {
 

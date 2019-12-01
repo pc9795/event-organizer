@@ -22,7 +22,7 @@ import java.io.IOException;
 /**
  * Created By: Prashant Chaubey
  * Created On: 29-11-2019 14:34
- * Purpose: TODO:
+ * Purpose: Controller for login
  **/
 @RestController
 public class AuthController {
@@ -45,10 +45,17 @@ public class AuthController {
         if (!passwordEncoder.matches(userLogin.getPassword(), user.getPassword())) {
             throw new BadCredentialsException(Constants.ErrorMsg.PASSWORDS_NOT_MATCH);
         }
+        //Create a session for this user.
         request.login(userLogin.getUsername(), userLogin.getPassword());
         return user;
     }
 
+    /**
+     * Handles 404. There was not a clean way to handle it by a controller advice.
+     *
+     * @param response
+     * @throws IOException
+     */
     @GetMapping("/error")
     public void handle404(HttpServletResponse response) throws IOException {
         Utils.createJSONErrorResponse(HttpServletResponse.SC_NOT_FOUND, Constants.ErrorMsg.NOT_FOUND, response);

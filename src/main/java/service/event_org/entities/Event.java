@@ -7,55 +7,83 @@ import org.hibernate.validator.constraints.Length;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created By: Prashant Chaubey
  * Created On: 29-11-2019 14:35
- * Purpose: TODO:
+ * Purpose: Events created by user
  **/
 @Entity
 @Table(name = "events")
 public class Event {
+    /**
+     * Auto incremented id
+     */
     @Id
     @GeneratedValue
-    private long id;
+    private Long id;
 
+    /**
+     * Title of the event.
+     */
     @NotNull
     @Column(nullable = false)
     @Length(max = 50)
     private String title;
 
+    /**
+     * Description of the event
+     */
     private String description;
 
+    /**
+     * Location of the event
+     */
     private String location;
 
+    /**
+     * Start time of the event
+     */
     @NotNull
     @Column(nullable = false)
     private LocalDateTime startTime;
 
+    /**
+     * End time of the event
+     */
     @NotNull
     @Column(nullable = false)
     private LocalDateTime endTime;
 
+    /**
+     * user who created this event
+     */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User createdBy;
 
-    @ManyToMany
-    private Set<User> sharedUsers;
+    /**
+     * The users to which this event is shared.
+     */
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<UserEvent> sharedUsers = new HashSet<>();
 
+    /**
+     * Represents whether event is archived or not.
+     */
     @JsonIgnore
     private boolean status;
 
     @JsonProperty
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
     @JsonIgnore
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -109,33 +137,69 @@ public class Event {
         this.createdBy = createdBy;
     }
 
-    @JsonProperty
-    public Set<User> getSharedUsers() {
-        return sharedUsers;
-    }
-
-    @JsonIgnore
-    public void setSharedUsers(Set<User> sharedUsers) {
-        this.sharedUsers = sharedUsers;
-    }
-
-    public void addSharedUser(User sharedUser) {
-        this.sharedUsers.add(sharedUser);
-        sharedUser.addSharedEvent(this);
-    }
-
-    public void addSharedUsers(List<User> sharedUsers) {
-        this.sharedUsers.addAll(sharedUsers);
-        for (User user : sharedUsers) {
-            user.addSharedEvent(this);
-        }
-    }
-
     public boolean getStatus() {
         return status;
     }
 
     public void setStatus(boolean status) {
         this.status = status;
+    }
+
+    /**
+     * Get all the users to which this event is shared. It hides that this relationship has an intermediate class.
+     *
+     * @return users
+     */
+    @JsonProperty
+    public Set<User> getSharedUsers() {
+        return sharedUsers.stream().map(UserEvent::getUser).collect(Collectors.toSet());
+    }
+
+    /**
+     * Share this event to a user
+     *
+     * @param sharedUser
+     */
+    public void addSharedUser(User sharedUser) {
+        UserEvent userEvent = new UserEvent(sharedUser, this);
+        this.sharedUsers.add(userEvent);
+    }
+
+    /**
+     * Unshare this event to the user
+     *
+     * @param sharedUser
+     */
+    public void removeSharedUser(User sharedUser) {
+        UserEvent userEvent = new UserEvent(sharedUser, this);
+        this.sharedUsers.remove(userEvent);
+    }
+
+    /**
+     * Archive this event for the given user with whom this event is shared.
+     *
+     * @param sharedUser
+     */
+    public void archiveSharedUser(User sharedUser) {
+        UserEvent userEvent = new UserEvent(sharedUser, this);
+        for (UserEvent sharedUserEvent : this.sharedUsers) {
+            if (sharedUserEvent.equals(userEvent)) {
+                sharedUserEvent.setStatus(false);
+            }
+        }
+    }
+
+    /**
+     * Unarchive this event for the given user with whom this event is shared.
+     *
+     * @param sharedUser
+     */
+    public void unArchiveSharedUser(User sharedUser) {
+        UserEvent userEvent = new UserEvent(sharedUser, this);
+        for (UserEvent sharedUserEvent : this.sharedUsers) {
+            if (sharedUserEvent.equals(userEvent)) {
+                sharedUserEvent.setStatus(true);
+            }
+        }
     }
 }

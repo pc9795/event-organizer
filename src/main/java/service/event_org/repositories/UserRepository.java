@@ -9,12 +9,32 @@ import java.util.List;
 /**
  * Created By: Prashant Chaubey
  * Created On: 29-11-2019 14:36
- * Purpose: TODO:
+ * Purpose: Repository for users
  **/
 public interface UserRepository extends PagingAndSortingRepository<User, Long> {
+    /**
+     * Find a user by username
+     *
+     * @param username
+     * @return user
+     */
     User findByUsername(String username);
 
+    /**
+     * Find all users with user names starting with given search string. Given pageable attribute controls the offset
+     * and limit of results.
+     *
+     * @param pageable
+     * @param searchStr
+     * @return users
+     */
     List<User> findAllByUsernameIgnoreCaseStartsWith(Pageable pageable, String searchStr);
 
+    /**
+     * Find a user by id
+     *
+     * @param id
+     * @return user
+     */
     User findById(long id);
 }

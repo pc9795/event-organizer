@@ -10,47 +10,54 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Created By: Prashant Chaubey
  * Created On: 29-11-2019 14:35
- * Purpose: TODO:
+ * Purpose: User of the applicaiton
  **/
 @Entity
 @Table(name = "users")
 public class User implements UserDetails {
+    /**
+     * Auto generated id
+     */
     @Id
     @GeneratedValue
-    private long id;
+    private Long id;
 
+    /**
+     * username of the user. It should be unique.
+     */
     @Column(nullable = false, unique = true)
     @NotNull
     @Length(min = 5, max = 20)
     private String username;
 
+    /**
+     * password of the user
+     */
     @Column(nullable = false)
     @NotNull
     @Length(min = 8)
     private String password;
 
+    /**
+     * email address of the user
+     */
     @Column(nullable = false)
     @NotNull
     @Email
     private String emailAddress;
 
-    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Event> events = new ArrayList<>();
-
-    @ManyToMany(mappedBy = "sharedUsers")
-    private Set<Event> sharedEvents = new HashSet<>();
-
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
     @JsonIgnore
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -71,39 +78,12 @@ public class User implements UserDetails {
         this.emailAddress = emailAddress;
     }
 
-    @JsonIgnore
-    public List<Event> getEvents() {
-        return events;
-    }
-
-    @JsonIgnore
-    public void setEvents(List<Event> events) {
-        this.events = events;
-    }
-
-    public void addEvent(Event event) {
-        this.events.add(event);
-        event.setCreatedBy(this);
-    }
-
-    @JsonIgnore
-    public Set<Event> getSharedEvents() {
-        return sharedEvents;
-    }
-
-    @JsonIgnore
-    public void setSharedEvents(Set<Event> sharedEvents) {
-        this.sharedEvents = sharedEvents;
-    }
-
-    public void addSharedEvent(Event event) {
-        this.sharedEvents.add(event);
-        event.getSharedUsers().add(this);
-    }
+    //METHODS NEEDED BY SPRING SECURITY
 
     @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        // Common role for all users.
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
     }
 

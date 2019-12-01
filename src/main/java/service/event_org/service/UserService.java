@@ -12,7 +12,7 @@ import service.event_org.utils.Constants;
 /**
  * Created By: Prashant Chaubey
  * Created On: 29-11-2019 14:37
- * Purpose: TODO:
+ * Purpose: Class used by spring security during auth.
  **/
 @Service
 public class UserService implements UserDetailsService {
@@ -23,6 +23,13 @@ public class UserService implements UserDetailsService {
         this.userRepository = userRepository;
     }
 
+    /**
+     * Load a user by username from the database.
+     *
+     * @param username username
+     * @return user
+     * @throws UsernameNotFoundException
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username);
