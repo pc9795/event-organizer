@@ -1,5 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {UserLogin} from '../../models/user-login'
+import {AuthenticationService} from "../../services/authentication.service";
+import {ActivatedRoute, Router} from "@angular/router";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {first} from "rxjs/operators";
+import {AlertService} from "../../services/alert.service";
 
 @Component({
   selector: 'app-login',
@@ -7,16 +11,47 @@ import {UserLogin} from '../../models/user-login'
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
+  loginForm: FormGroup;
+  submitted = false;
+  returnUrl: string;
+  loading = false;
 
-  model: UserLogin;
+  constructor(private formBuilder: FormBuilder, private authenticationService: AuthenticationService,
+              private router: Router, private route: ActivatedRoute, private alertService: AlertService) {
+    // redirect to home if already logged in.
+    if (this.authenticationService.currentUserValue) {
+      this.router.navigate(['/']);
+    }
+  }
 
-  constructor() {
+  // getter for easy access to form fields
+  get f() {
+    return this.loginForm.controls;
   }
 
   ngOnInit() {
+    this.loginForm = this.formBuilder.group({
+      username: ['', Validators.required],
+      password: ['', Validators.required]
+    });
+
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   }
 
-  get diagnostic() {
-    return JSON.stringify(this.model);
+  onSubmit() {
+    this.submitted = true;
+    if (this.loginForm.invalid) {
+      return;
+    }
+    this.loading = true;
+    this.authenticationService.login(this.f.username.value, this.f.password.value).pipe(first())
+      .subscribe(data => {
+        this.router.navigate([this.returnUrl]);
+      }, error => {
+        this.alertService.error(error);
+        this.loading = false;
+      });
   }
+
+
 }

@@ -195,7 +195,7 @@ public class EventResource {
         Event dbEvent = eventRepository.findById(eventId);
         if (dbEvent == null) {
             throw new ResourceNotFoundException(String.format("Event id:%s", eventId));
-        }
+            }
         User user = userRepository.findByUsername(principal.getName());
         //Check event is created by current user
         if (!dbEvent.getCreatedBy().getUsername().equals(user.getUsername())) {

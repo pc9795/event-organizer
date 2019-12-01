@@ -1,12 +1,28 @@
 <div class="container">
-  <form #loginForm="ngForm">
-    <input type="text" placeholder="Username" class="form-control" id="username" required [(ngModel)]="model.username"
-           name="username">
-    <div [hidden]="username.valid || username.pristine" class="alert alert-danger">Username is required</div>
-    <input type="password" placeholder="Password" class="form-control" id="password" required
-           [(ngModel)]="model.password" name="password">
-    <div [hidden]="password.valid || password.pristine" class="alert alert-danger">Password is required</div>
-    <button type="submit" class="btn btn-success">Submit</button>
-  </form>
+  <div class="row mt-5">
+    <div class="col-4 offset-4">
+      <h2 class="text-center">EVENT ORGANIZER</h2>
+    </div>
+  </div>
+  <div class="row mt-3">
+    <form class="col-4 offset-4 " (ngSubmit)="onSubmit()" [formGroup]="loginForm">
+      <input type="text" placeholder="Username" class="form-control" formControlName="username" required
+             [ngClass]="{ 'is-invalid': submitted && f.username.errors }">
+      <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
+        <div *ngIf="f.username.errors.required">Username is required</div>
+      </div>
+      <input type="password" placeholder="Password" class="form-control" formControlName="password" required
+             [ngClass]="{ 'is-invalid': submitted && f.password.errors }">
+      <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+        <div *ngIf="f.password.errors.required">Password is required</div>
+      </div>
+      <button [disabled]="loading" class="btn btn-success form-control">Login</button>
+    </form>
+  </div>
+  <div class="row">
+    <div class="col-4 offset-4">
+      <a routerLink="/register">New user? Register Here!</a>
+    </div>
+  </div>
 </div>
 {{diagnostic}}

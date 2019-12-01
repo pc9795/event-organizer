@@ -10,6 +10,11 @@ import {SharedEventsComponent} from './components/shared-events/shared-events.co
 import {ArchivedEventsComponent} from './components/archived-events/archived-events.component';
 import {SharedArchivedEventsComponent} from './components/shared-archived-events/shared-archived-events.component';
 import {FormsModule} from "@angular/forms";
+import {HomeComponent} from './components/home/home.component';
+import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
+import {routing} from "./app.routing";
+import {AlertComponent} from './components/alert/alert.component';
+import {ErrorInterceptor} from "./error.interceptor";
 
 @NgModule({
   declarations: [
@@ -19,15 +24,19 @@ import {FormsModule} from "@angular/forms";
     ActiveEventsComponent,
     SharedEventsComponent,
     ArchivedEventsComponent,
-    SharedArchivedEventsComponent
+    SharedArchivedEventsComponent,
+    HomeComponent,
+    AlertComponent
   ],
   imports: [
     BrowserModule,
     // We have to add this to start using template based forms.
     FormsModule,
-    AppRoutingModule
+    AppRoutingModule,
+    HttpClientModule,
+    routing
   ],
-  providers: [],
+  providers: [{provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true}],
   bootstrap: [AppComponent]
 })
 export class AppModule {
