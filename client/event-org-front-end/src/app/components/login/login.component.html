@@ -6,13 +6,13 @@
   </div>
   <div class="row mt-3">
     <form class="col-4 offset-4 " (ngSubmit)="onSubmit()" [formGroup]="loginForm">
-      <input type="text" placeholder="Username" class="form-control" formControlName="username" required
-             [ngClass]="{ 'is-invalid': submitted && f.username.errors }">
+      <input type="text" placeholder="Username" class="form-control" formControlName="username"
+             [ngClass]="{ 'is-invalid': submitted && f.username.errors }" required>
       <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
         <div *ngIf="f.username.errors.required">Username is required</div>
       </div>
-      <input type="password" placeholder="Password" class="form-control" formControlName="password" required
-             [ngClass]="{ 'is-invalid': submitted && f.password.errors }">
+      <input type="password" placeholder="Password" class="form-control" formControlName="password"
+             [ngClass]="{ 'is-invalid': submitted && f.password.errors }" required>
       <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
         <div *ngIf="f.password.errors.required">Password is required</div>
       </div>
@@ -25,4 +25,3 @@
     </div>
   </div>
 </div>
-{{diagnostic}}

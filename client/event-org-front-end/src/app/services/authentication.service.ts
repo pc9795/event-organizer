@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject} from "rxjs/internal/BehaviorSubject";
-import {User} from "../models/user";
-import {Observable} from "rxjs/internal/Observable";
-import {HttpClient} from "@angular/common/http";
-import {map} from "rxjs/operators";
+import {BehaviorSubject} from 'rxjs/internal/BehaviorSubject';
+import {User} from '../models/user';
+import {Observable} from 'rxjs/internal/Observable';
+import {HttpClient} from '@angular/common/http';
+import {map} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -35,6 +35,7 @@ export class AuthenticationService {
         localStorage.setItem('currentUser', JSON.stringify(user));
         this.currentUserSubject.next(<User>user);
       }
+      return user;
     }));
   }
 }

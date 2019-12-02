@@ -1,9 +1,10 @@
 import {Component, OnInit} from '@angular/core';
-import {AuthenticationService} from "../../services/authentication.service";
-import {ActivatedRoute, Router} from "@angular/router";
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {first} from "rxjs/operators";
-import {AlertService} from "../../services/alert.service";
+import {AuthenticationService} from '../../services/authentication.service';
+import {ActivatedRoute, Router} from '@angular/router';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {first} from 'rxjs/operators';
+import {AlertService} from '../../services/alert.service';
+import {HttpErrorResponse} from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -45,12 +46,13 @@ export class LoginComponent implements OnInit {
     }
     this.loading = true;
     this.authenticationService.login(this.f.username.value, this.f.password.value).pipe(first())
-      .subscribe(data => {
-        this.router.navigate([this.returnUrl]);
-      }, error => {
-        this.alertService.error(error);
-        this.loading = false;
-      });
+      .subscribe(
+        data => {
+          this.router.navigate([this.returnUrl]);
+        }, (error: HttpErrorResponse) => {
+          this.alertService.error(error.error.error);
+          this.loading = false;
+        });
   }
 
 
