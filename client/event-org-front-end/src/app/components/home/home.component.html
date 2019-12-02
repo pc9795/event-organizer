@@ -77,7 +77,8 @@
           <i class="fa fa-trash"></i>
         </button>
         <button title="Archive" class="btn btn-sm btn-outline-secondary"
-                (click)="archiveEvent(anEvent.id,isCreatedByMe(anEvent.createdBy))">
+                (click)="archiveEvent(anEvent.id,isCreatedByMe(anEvent.createdBy))"
+                *ngIf="refDate>anEvent.endTime">
           <i class="fa fa-archive"></i>
         </button>
       </td>

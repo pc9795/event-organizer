@@ -52,6 +52,7 @@ public class User implements UserDetails {
     @Email
     private String emailAddress;
 
+    @JsonProperty
     public Long getId() {
         return id;
     }
