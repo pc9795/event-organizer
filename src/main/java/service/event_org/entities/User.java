@@ -79,7 +79,6 @@ public class User implements UserDetails {
     }
 
     //METHODS NEEDED BY SPRING SECURITY
-
     @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

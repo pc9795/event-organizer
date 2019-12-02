@@ -9,9 +9,10 @@ import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {routing} from './app.routing';
 import {AlertComponent} from './components/alert/alert.component';
 import {ErrorInterceptor} from './error.interceptor';
-import { AddEventComponent } from './components/add-event/add-event.component';
-import { ViewEventComponent } from './components/view-event/view-event.component';
-import { ArchivedComponent } from './components/archived/archived.component';
+import {AddEventComponent} from './components/add-event/add-event.component';
+import {ViewEventComponent} from './components/view-event/view-event.component';
+import {ArchivedComponent} from './components/archived/archived.component';
+import {AppRoutingModule} from './app-routing.module';
 
 @NgModule({
   declarations: [
@@ -28,11 +29,17 @@ import { ArchivedComponent } from './components/archived/archived.component';
     BrowserModule,
     // We have to add this to start using template based forms.
     ReactiveFormsModule,
-    // AppRoutingModule,
+    AppRoutingModule,
     HttpClientModule,
     routing
   ],
-  providers: [{provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true}],
+  providers: [
+    {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true}
+    // {
+    //   provide: RouteReuseStrategy,
+    //   useClass: CustomRouteReuseStrategy
+    // }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

@@ -98,4 +98,26 @@ export class ViewEventComponent implements OnInit {
       }
     );
   }
+
+  unshareEvent(userId: number, eventId: number) {
+    if (confirm('Are you sure to unshare this event with this user')) {
+      this.eventService.unshareEvent(eventId, userId).subscribe(
+        data => {
+          this.eventService.getEvent(eventId).subscribe(
+            data => {
+              this.router.navigateByUrl('/', {skipLocationChange: true}).then(
+                () => {
+                  this.router.navigate(['/viewEvent'], {state: {event: data, archived: false}});
+                }
+              );
+            }, error => {
+              this.alertService.error(error);
+            }
+          )
+        }, error => {
+          this.alertService.error(error);
+        }
+      )
+    }
+  }
 }

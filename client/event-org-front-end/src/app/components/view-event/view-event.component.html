@@ -41,5 +41,29 @@
 
       <button [disabled]="loading || !isCreatedByMe()" class="btn btn-info form-control mt-2">Save</button>
     </form>
+    <div class="col-4" *ngIf="!archived && anEvent">
+      <table class="table table-sm table-hover">
+        <caption>Shared with</caption>
+        <thead>
+        <tr>
+          <th scope="col">Username</th>
+          <th scope="col">Email</th>
+          <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let sharedUser of anEvent.sharedUsers">
+          <td>{{sharedUser.username}}</td>
+          <td>{{sharedUser.emailAddress}}</td>
+          <td>
+            <button title="Delete" class="btn btn-sm btn-outline-danger mr-1"
+                    (click)="unshareEvent(sharedUser.id, anEvent.id)">
+              <i class="fa fa-close"></i>
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>

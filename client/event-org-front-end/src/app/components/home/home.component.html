@@ -2,60 +2,88 @@
   <div class="row mt-3">
     <div class="col-8 offset-2">
       <div class="input-group">
-        <input type="text" class="form-control" placeholder="Enter text">
+        <input type="text" class="form-control" placeholder="Enter text" #searchStr>
         <div class="input-group-append">
-          <button class="btn btn-outline-success" type="button">Search</button>
+          <button class="btn btn-outline-success" type="button" (click)="search(searchStr.value)">
+            Search
+          </button>
         </div>
         <div class="input-group-append">
-          <a routerLink="/createEvent" class="btn btn-info" type="button">Add Event</a>
+          <a routerLink="/createEvent" class="btn btn-info">Add Event</a>
+        </div>
+      </div>
+      <div class="col-12 mt-3" *ngIf="searched">
+        <h4 class="text-secondary text-center">Search results found: {{objLen(events)}}</h4>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-5">
+    <div class="col-3">
+      <div class="input-group">
+        <input type="text" placeholder="Username..." class="form-control" #username>
+        <div class="input-group-append">
+          <button type="button" title="share" class="btn btn-sm btn-secondary" (click)="share(username.value)">
+            <i class="fa fa-share"></i>
+          </button>
         </div>
       </div>
     </div>
-
-    <table class="table table-hover table-sm mt-5">
-      <thead>
-      <tr>
-        <th scope="col">Title</th>
-        <th scope="col">Description</th>
-        <th scope="col">Location</th>
-        <th scope="col">Start time</th>
-        <th scope="col">End time</th>
-        <th scope="col">Created by</th>
-        <th scope="col">Actions</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr *ngFor="let anEvent of events">
-        <td scope="row">
-          <a routerLink="/viewEvent"
-             [state]="{data:{event:anEvent,archived:false}}">
-            {{anEvent.title}}</a>
-          <p class="shared-text" *ngIf="objLen(anEvent.sharedUsers)>0">Shared with {{objLen(anEvent.sharedUsers)}}
-            people</p>
-        </td>
-        <td>{{truncatedStr(anEvent.description,20)}}</td>
-        <td>{{truncatedStr(anEvent.location,20)}}</td>
-        <td>
-          <p>{{anEvent.startTime | date:'medium'}}</p>
-          <p class="shared-text" *ngIf="checkEventIsFinished(anEvent.startTime,anEvent.endTime)==0">Event in
-            progress</p>
-          <p class="shared-text" *ngIf="checkEventIsFinished(anEvent.startTime,anEvent.endTime)==1">Event has ended</p>
-        </td>
-        <td>{{anEvent.endTime | date:'medium'}}</td>
-        <td>{{getCreatedBy(anEvent.createdBy)}}</td>
-        <td>
-          <button title="Delete" class="btn btn-sm btn-outline-danger mr-1"
-                  (click)="deleteEvent(anEvent.id,isCreatedByMe(anEvent.createdBy))">
-            <i class="fa fa-trash"></i>
-          </button>
-          <button title="Archive" class="btn btn-sm btn-outline-secondary"
-                  (click)="archiveEvent(anEvent.id,isCreatedByMe(anEvent.createdBy))">
-            <i class="fa fa-archive"></i>
-          </button>
-        </td>
-      </tr>
-      </tbody>
-    </table>
   </div>
+
+  <table class="table table-hover table-sm mt-2">
+    <caption>Active events</caption>
+    <thead>
+    <tr>
+      <th scope="col"></th>
+      <th scope="col">Title</th>
+      <th scope="col">Description</th>
+      <th scope="col">Location</th>
+      <th scope="col">Start time</th>
+      <th scope="col">End time</th>
+      <th scope="col">Created by</th>
+      <th scope="col">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let anEvent of events">
+      <td scope="row">
+        <div class="custom-control custom-checkbox">
+          <input type="checkbox" class="custom-control-input" id="{{anEvent.id}}"
+                 (change)="updateOptions(anEvent.id)">
+          <label class="custom-control-label" for="{{anEvent.id}}"></label>
+        </div>
+      </td>
+      <td>
+        <a routerLink="/viewEvent"
+           [state]="{event:anEvent,archived:false}">
+          {{anEvent.title}}</a>
+        <p class="shared-text" *ngIf="objLen(anEvent.sharedUsers)>0">Shared with {{objLen(anEvent.sharedUsers)}}
+          people</p>
+      </td>
+      <td>{{truncatedStr(anEvent.description,20)}}</td>
+      <td>{{truncatedStr(anEvent.location,20)}}</td>
+      <td>
+        <p>{{anEvent.startTime | date:'medium'}}</p>
+        <p class="shared-text" *ngIf="checkEventIsFinished(anEvent.startTime,anEvent.endTime)==0">Event in
+          progress</p>
+        <p class="shared-text" *ngIf="checkEventIsFinished(anEvent.startTime,anEvent.endTime)==1">Event has ended</p>
+      </td>
+      <td>{{anEvent.endTime | date:'medium'}}</td>
+      <td>{{getCreatedBy(anEvent.createdBy)}}</td>
+      <td>
+        <button title="Delete" class="btn btn-sm btn-outline-danger mr-1"
+                (click)="deleteEvent(anEvent.id,isCreatedByMe(anEvent.createdBy))">
+          <i class="fa fa-trash"></i>
+        </button>
+        <button title="Archive" class="btn btn-sm btn-outline-secondary"
+                (click)="archiveEvent(anEvent.id,isCreatedByMe(anEvent.createdBy))">
+          <i class="fa fa-archive"></i>
+        </button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
 
 </div>

@@ -28,7 +28,7 @@ public class UserService implements UserDetailsService {
      *
      * @param username username
      * @return user
-     * @throws UsernameNotFoundException
+     * @throws UsernameNotFoundException when user with given username is not found.
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

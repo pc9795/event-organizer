@@ -3,7 +3,7 @@ package service.event_org.utils;
 /**
  * Created By: Prashant Chaubey
  * Created On: 29-11-2019 14:37
- * Purpose: TODO:
+ * Purpose: Constants in the project
  **/
 public final class Constants {
     private Constants() {

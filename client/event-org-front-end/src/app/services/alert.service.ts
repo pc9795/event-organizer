@@ -36,7 +36,6 @@ export class AlertService {
 
   error(error: HttpErrorResponse, keepAfterNavigationChange = false) {
     this.keepAfterNavigationChange = keepAfterNavigationChange;
-    console.log(error);
     //Coupled to the error structure of the code.
     if (error && error.error && error.error.error && error.error.error.message) {
       this.subject.next({type: 'error', text: error.error.error.message});

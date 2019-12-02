@@ -25,7 +25,6 @@ export class AuthenticationService {
   logout() {
     localStorage.removeItem('currentUser');
     this.currentUserSubject.next(null);
-
     this.http.get('http://localhost:8080/logout', {withCredentials: true}).subscribe(
       data => {
       }, error => {

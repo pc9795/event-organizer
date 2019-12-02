@@ -14,16 +14,13 @@ import service.event_org.repositories.UserRepository;
 
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
  * Created By: Prashant Chaubey
  * Created On: 29-11-2019 14:34
- * Purpose: TODO:
+ * Purpose: REST resource for accessing Events
  **/
 @RestController
 @RequestMapping("/api/v1/events")
@@ -52,17 +49,18 @@ public class EventResource {
         List<Event> createdEvents;
         List<Event> sharedEvents;
         //We have passed a search parameter
+        //Status = true represents active events.
         if (search != null) {
             createdEvents = eventRepository.
-                    findAllByCreatedByAndTitleLikeAndStatusOrderByStartTimeAsc(pageable, user, search, true);
+                    findAllByCreatedByAndTitleContainingAndStatusOrderByStartTimeAsc(pageable, user, search, true);
             sharedEvents = eventRepository.
-                    findAllBySharedUsersIsAndTitleLikeOrderByStartTimeAsc(pageable, user.getId(), search, true);
+                    findAllBySharedUsersIsAndTitleContainingOrderByStartTimeAsc(pageable, user.getId(), search, true);
         } else {
             createdEvents = eventRepository.findAllByCreatedByAndStatusOrderByStartTimeAsc(pageable, user, true);
             sharedEvents = eventRepository.findAllBySharedUsersIsOrderByStartTimeAsc(pageable, user.getId(), true);
         }
+        //Sorting and combining the list.
         createdEvents.addAll(sharedEvents);
-        //Sorting the combined list.
         createdEvents.sort(Comparator.comparing(Event::getStartTime));
 
         return createdEvents;
@@ -83,18 +81,19 @@ public class EventResource {
         List<Event> archivedEvents;
         List<Event> sharedArchivedEvents;
         //We have passed a search parameter
+        //Status = false represents archived events.
         if (search != null) {
             archivedEvents = eventRepository.
-                    findAllByCreatedByAndTitleLikeAndStatusOrderByStartTimeAsc(pageable, user, search, false);
+                    findAllByCreatedByAndTitleContainingAndStatusOrderByStartTimeAsc(pageable, user, search, false);
             sharedArchivedEvents = eventRepository.
-                    findAllBySharedUsersIsAndTitleLikeOrderByStartTimeAsc(pageable, user.getId(), search, false);
+                    findAllBySharedUsersIsAndTitleContainingOrderByStartTimeAsc(pageable, user.getId(), search, false);
         } else {
             archivedEvents = eventRepository.findAllByCreatedByAndStatusOrderByStartTimeAsc(pageable, user, false);
             sharedArchivedEvents = eventRepository.findAllBySharedUsersIsOrderByStartTimeAsc(pageable, user.getId(),
                     false);
         }
+        //Sorting and combining the combined list
         archivedEvents.addAll(sharedArchivedEvents);
-        //Sorting the combined list
         archivedEvents.sort(Comparator.comparing(Event::getStartTime));
 
         return archivedEvents;
@@ -168,9 +167,8 @@ public class EventResource {
         if (dbEvent == null) {
             throw new ResourceNotFoundException(String.format("Event id:%s", eventId));
         }
-        User user = userRepository.findByUsername(principal.getName());
         //Check event is created by current user
-        if (!dbEvent.getCreatedBy().getUsername().equals(user.getUsername())) {
+        if (!dbEvent.getCreatedBy().getUsername().equals(principal.getName())) {
             throw new ForbiddenResourceException();
         }
         //Check event is not archived
@@ -203,8 +201,7 @@ public class EventResource {
             throw new ResourceNotFoundException(String.format("Event id:%s", eventId));
         }
         //Check event is created by current user
-        User user = userRepository.findByUsername(principal.getName());
-        if (!dbEvent.getCreatedBy().getUsername().equals(user.getUsername())) {
+        if (!dbEvent.getCreatedBy().getUsername().equals(principal.getName())) {
             throw new ForbiddenResourceException();
         }
         //Delete
@@ -227,9 +224,8 @@ public class EventResource {
         if (dbEvent == null) {
             throw new ResourceNotFoundException(String.format("Event id:%s", eventId));
         }
-        User user = userRepository.findByUsername(principal.getName());
         //Check event is created by current user
-        if (!dbEvent.getCreatedBy().getUsername().equals(user.getUsername())) {
+        if (!dbEvent.getCreatedBy().getUsername().equals(principal.getName())) {
             throw new ForbiddenResourceException();
         }
         //Mark as archived
@@ -254,9 +250,8 @@ public class EventResource {
         if (dbEvent == null) {
             throw new ResourceNotFoundException(String.format("Event id:%s", eventId));
         }
-        User user = userRepository.findByUsername(principal.getName());
         //Check event is create by current user
-        if (!dbEvent.getCreatedBy().getUsername().equals(user.getUsername())) {
+        if (!dbEvent.getCreatedBy().getUsername().equals(principal.getName())) {
             throw new ForbiddenResourceException();
         }
         //Mark as active
@@ -322,47 +317,46 @@ public class EventResource {
     /**
      * Share the given event with a list of users
      *
-     * @param eventId
-     * @param userIds
      * @param principal
      * @return updated event
      * @throws ResourceNotFoundException  either user or event with given id is not present
      * @throws ForbiddenResourceException if event is not created by user
      * @throws BadDataException           event is archived
      */
-    @PostMapping("/{event_id}/share")
-    public Event shareEvent(@PathVariable("event_id") long eventId, @RequestBody Long[] userIds, Principal principal)
+    @PostMapping("/share/{username}")
+    public List<Event> shareEvent(@PathVariable("username") String username, @RequestBody Long[] eventIds, Principal principal)
             throws ResourceNotFoundException, ForbiddenResourceException, BadDataException {
-        Event dbEvent = eventRepository.findById(eventId);
-        if (dbEvent == null) {
-            throw new ResourceNotFoundException(String.format("Event id:%s", eventId));
+        if (principal.getName().equals(username)) {
+            throw new BadDataException("Can't share with yourself");
         }
-        //Check event is archived
-        if (!dbEvent.getStatus()) {
-            throw new BadDataException("Can't share an archived event");
+        User dbUser = userRepository.findByUsername(username);
+        if (dbUser == null) {
+            throw new ResourceNotFoundException(String.format("Username:%s", username));
         }
-        User user = userRepository.findByUsername(principal.getName());
-        //Check event is created by current user
-        if (!dbEvent.getCreatedBy().getUsername().equals(user.getUsername())) {
-            throw new ForbiddenResourceException();
-        }
-        //Remove the current user's id and null ids.
-        List<Long> userIdsList = Arrays.stream(userIds).filter(userId -> userId != null && !userId.equals(user.getId())).
-                collect(Collectors.toList());
+        //Remove the  null ids.
+        List<Long> eventIdsList = Arrays.stream(eventIds).filter(Objects::nonNull).collect(Collectors.toList());
+
         //Early exit if nothing is there
-        if (userIdsList.size() == 0) {
-            return dbEvent;
+        if (eventIdsList.size() == 0) {
+            throw new BadDataException("No data received");
         }
-        for (Long userId : userIdsList) {
-            User sharedUser = userRepository.findById(userId.longValue());
-            if (sharedUser == null) {
-                throw new ResourceNotFoundException(String.format("User id:%s", userId));
+        List<Event> updatedEvents = new ArrayList<>();
+        for (Long eventId : eventIdsList) {
+            Event dbEvent = eventRepository.findById(eventId.longValue());
+            //Check event is archived
+            if (!dbEvent.getStatus()) {
+                throw new BadDataException("Can't share an archived event");
             }
-            //Share the event to user
-            dbEvent.addSharedUser(sharedUser);
+            //Check event is created by current user
+            if (!dbEvent.getCreatedBy().getUsername().equals(principal.getName())) {
+                throw new ForbiddenResourceException();
+            }
+            dbEvent.addSharedUser(dbUser);
+            eventRepository.save(dbEvent);
+            updatedEvents.add(dbEvent);
         }
-        //Save the updated event
-        return eventRepository.save(dbEvent);
+        //Save the updated user
+        return updatedEvents;
     }
 
     /**
@@ -383,13 +377,12 @@ public class EventResource {
         if (dbEvent == null) {
             throw new ResourceNotFoundException(String.format("Event id:%s", eventId));
         }
-        User user = userRepository.findByUsername(principal.getName());
         User sharedUser = userRepository.findById(userId.longValue());
         if (sharedUser == null) {
             throw new ResourceNotFoundException(String.format("User id:%s", eventId));
         }
         // Check event is created by the user
-        if (!dbEvent.getCreatedBy().getUsername().equals(user.getUsername())) {
+        if (!dbEvent.getCreatedBy().getUsername().equals(principal.getName())) {
             throw new ForbiddenResourceException();
         }
         //Unshare the event with given user
@@ -409,7 +402,7 @@ public class EventResource {
      */
     @DeleteMapping("/{event_id}/unshare")
     public Event unShareEventWithCurrentUser(@PathVariable("event_id") long eventId, Principal principal)
-            throws ResourceNotFoundException, ForbiddenResourceException, BadDataException {
+            throws ResourceNotFoundException, ForbiddenResourceException {
         Event dbEvent = eventRepository.findById(eventId);
         if (dbEvent == null) {
             throw new ResourceNotFoundException(String.format("Event id:%s", eventId));

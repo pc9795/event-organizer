@@ -26,8 +26,8 @@ public interface EventRepository extends PagingAndSortingRepository<Event, Long>
      * @param status
      * @return events
      */
-    List<Event> findAllByCreatedByAndTitleLikeAndStatusOrderByStartTimeAsc(Pageable pageable, User user, String searchStr,
-                                                                           boolean status);
+    List<Event> findAllByCreatedByAndTitleContainingAndStatusOrderByStartTimeAsc(Pageable pageable, User user,
+                                                                                 String searchStr, boolean status);
 
     /**
      * Find all events created by given user with the given status. Given pageable attribute controls offset and limit
@@ -51,10 +51,11 @@ public interface EventRepository extends PagingAndSortingRepository<Event, Long>
      * @return events
      */
     @Query(value = "select e from User u, Event e, UserEvent ue where e.id=ue.id.eventId and ue.id.userId=u.id " +
-            "and ue.status=:status and e.title like :searchStr and u.id=:userId order by e.startTime asc ")
-    List<Event> findAllBySharedUsersIsAndTitleLikeOrderByStartTimeAsc(Pageable pageable, @Param("userId") Long userId,
-                                                                      @Param("searchStr") String searchStr,
-                                                                      @Param("status") boolean status);
+            "and ue.status=:status and e.title like %:searchStr% and u.id=:userId order by e.startTime asc ")
+    List<Event> findAllBySharedUsersIsAndTitleContainingOrderByStartTimeAsc(Pageable pageable,
+                                                                            @Param("userId") Long userId,
+                                                                            @Param("searchStr") String searchStr,
+                                                                            @Param("status") boolean status);
 
     /**
      * Find all events shared with given user with the given status. Given pageable attribute controls offset and limit

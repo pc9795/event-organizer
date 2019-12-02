@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * Created By: Prashant Chaubey
  * Created On: 29-11-2019 14:34
- * Purpose: TODO:
+ * Purpose: REST resource for accessing Users.
  **/
 @RestController
 @RequestMapping("/api/v1/users")
@@ -32,11 +32,25 @@ public class UserResource {
         this.passwordEncoder = passwordEncoder;
     }
 
+    /**
+     * Get all users whose name starts with the given search parameter.
+     *
+     * @param search
+     * @param pageable
+     * @return users
+     */
     @GetMapping
     public List<User> getUsers(@RequestParam(value = "search") String search, Pageable pageable) {
         return userRepository.findAllByUsernameIgnoreCaseStartsWith(pageable, search);
     }
 
+    /**
+     * Get a user with given id.
+     *
+     * @param userId
+     * @return
+     * @throws ResourceNotFoundException user with given user id not present
+     */
     @GetMapping("/{user_id}")
     public User getUser(@PathVariable("user_id") long userId) throws ResourceNotFoundException {
         User user = userRepository.findById(userId);
@@ -46,6 +60,13 @@ public class UserResource {
         return user;
     }
 
+    /**
+     * Create a new user
+     *
+     * @param user
+     * @return
+     * @throws UserAlreadyExistException a user with given username already exists
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public User createUser(@Valid @RequestBody User user) throws UserAlreadyExistException {

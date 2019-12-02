@@ -10,12 +10,14 @@ export class EventsService {
   constructor(private httpClient: HttpClient) {
   }
 
-  getActiveEvents() {
-    return this.httpClient.get('http://localhost:8080/api/v1/events', {withCredentials: true});
+  getActiveEvents(searchStr = null) {
+    let searchPart = searchStr ? `?search=${searchStr}` : '';
+    return this.httpClient.get(`http://localhost:8080/api/v1/events${searchPart}`, {withCredentials: true});
   }
 
-  getArchivedEvents() {
-    return this.httpClient.get('http://localhost:8080/api/v1/events/archive', {withCredentials: true});
+  getArchivedEvents(searchStr = null) {
+    let searchPart = searchStr ? `?search=${searchStr}` : '';
+    return this.httpClient.get(`http://localhost:8080/api/v1/events/archive${searchPart}`, {withCredentials: true});
   }
 
   getEvent(eventId: number) {
@@ -50,8 +52,8 @@ export class EventsService {
     return this.httpClient.patch(`http://localhost:8080/api/v1/events/${eventId}/shared/unarchive`, null, {withCredentials: true});
   }
 
-  shareEvent(eventId: number, userIds: number[]) {
-    return this.httpClient.post(`http://localhost:8080/api/v1/events/${eventId}/share`, userIds, {withCredentials: true});
+  shareEvent(username: string, eventIds: string[]) {
+    return this.httpClient.post(`http://localhost:8080/api/v1/events/share/${username}`, eventIds, {withCredentials: true});
   }
 
   unshareEvent(eventId: number, userId: number) {

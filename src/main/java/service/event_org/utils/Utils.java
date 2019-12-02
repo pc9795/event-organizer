@@ -10,7 +10,7 @@ import java.io.IOException;
 /**
  * Created By: Prashant Chaubey
  * Created On: 29-11-2019 14:37
- * Purpose: TODO:
+ * Purpose: Utility methods for the project
  **/
 public final class Utils {
     private Utils() {

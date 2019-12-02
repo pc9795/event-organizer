@@ -2,17 +2,21 @@
   <div class="row mt-3">
     <div class="col-8 offset-2">
       <div class="input-group">
-        <input type="text" class="form-control" placeholder="Enter text">
+        <input type="text" class="form-control" placeholder="Enter text" #searchStr>
         <div class="input-group-append">
-          <button class="btn btn-outline-success" type="button">Search</button>
+          <button class="btn btn-outline-success" type="button" (click)="search(searchStr.value)">Search</button>
         </div>
         <div class="input-group-append">
           <a routerLink="/createEvent" class="btn btn-info" type="button">Add Event</a>
         </div>
       </div>
+      <div class="col-12 mt-3" *ngIf="searched">
+        <h4 class="text-secondary text-center">Search results found: {{objLen(events)}}</h4>
+      </div>
     </div>
 
     <table class="table table-hover table-sm mt-5">
+      <caption>Archived events</caption>
       <thead>
       <tr>
         <th scope="col">Title</th>
@@ -28,7 +32,7 @@
       <tr *ngFor="let anEvent of events">
         <td scope="row">
           <a routerLink="/viewEvent"
-             [state]="{data:{event:anEvent,archived:true}}">
+             [state]="{event:anEvent,archived:true}">
             {{anEvent.title}}</a>
         </td>
         <td>{{truncatedStr(anEvent.description,20)}}</td>
