@@ -10,6 +10,8 @@ import {routing} from './app.routing';
 import {AlertComponent} from './components/alert/alert.component';
 import {ErrorInterceptor} from './error.interceptor';
 import { AddEventComponent } from './components/add-event/add-event.component';
+import { ViewEventComponent } from './components/view-event/view-event.component';
+import { ArchivedComponent } from './components/archived/archived.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +20,9 @@ import { AddEventComponent } from './components/add-event/add-event.component';
     LoginComponent,
     HomeComponent,
     AlertComponent,
-    AddEventComponent
+    AddEventComponent,
+    ViewEventComponent,
+    ArchivedComponent
   ],
   imports: [
     BrowserModule,

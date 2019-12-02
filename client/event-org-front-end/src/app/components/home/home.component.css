@@ -5,3 +5,7 @@ p {
 .shared-text {
   font-size: 12px;
 }
+
+a {
+  color: #000000;
+}

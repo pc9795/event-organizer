@@ -4,6 +4,7 @@ import {User} from '../models/user';
 import {Observable} from 'rxjs/internal/Observable';
 import {HttpClient} from '@angular/common/http';
 import {map} from 'rxjs/operators';
+import {AlertService} from './alert.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class AuthenticationService {
   private currentUserSubject: BehaviorSubject<User>;
   public currentUser: Observable<User>;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private alertService: AlertService) {
     this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem('currentUser')));
     this.currentUser = this.currentUserSubject.asObservable();
   }
@@ -24,6 +25,13 @@ export class AuthenticationService {
   logout() {
     localStorage.removeItem('currentUser');
     this.currentUserSubject.next(null);
+
+    this.http.get('http://localhost:8080/logout', {withCredentials: true}).subscribe(
+      data => {
+      }, error => {
+        this.alertService.error(error);
+      }
+    );
   }
 
   login(username: string, password: string) {

@@ -28,18 +28,13 @@
       <tr *ngFor="let anEvent of events">
         <td scope="row">
           <a routerLink="/viewEvent"
-             [state]="{data:{event:anEvent,archived:false}}">
+             [state]="{data:{event:anEvent,archived:true}}">
             {{anEvent.title}}</a>
-          <p class="shared-text" *ngIf="objLen(anEvent.sharedUsers)>0">Shared with {{objLen(anEvent.sharedUsers)}}
-            people</p>
         </td>
         <td>{{truncatedStr(anEvent.description,20)}}</td>
         <td>{{truncatedStr(anEvent.location,20)}}</td>
         <td>
           <p>{{anEvent.startTime | date:'medium'}}</p>
-          <p class="shared-text" *ngIf="checkEventIsFinished(anEvent.startTime,anEvent.endTime)==0">Event in
-            progress</p>
-          <p class="shared-text" *ngIf="checkEventIsFinished(anEvent.startTime,anEvent.endTime)==1">Event has ended</p>
         </td>
         <td>{{anEvent.endTime | date:'medium'}}</td>
         <td>{{getCreatedBy(anEvent.createdBy)}}</td>
@@ -48,9 +43,9 @@
                   (click)="deleteEvent(anEvent.id,isCreatedByMe(anEvent.createdBy))">
             <i class="fa fa-trash"></i>
           </button>
-          <button title="Archive" class="btn btn-sm btn-outline-secondary"
-                  (click)="archiveEvent(anEvent.id,isCreatedByMe(anEvent.createdBy))">
-            <i class="fa fa-archive"></i>
+          <button title="Unarchive" class="btn btn-sm btn-outline-secondary"
+                  (click)="unarchiveEvent(anEvent.id,isCreatedByMe(anEvent.createdBy))">
+            <i class="fa fa-repeat"></i>
           </button>
         </td>
       </tr>

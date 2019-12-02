@@ -4,7 +4,6 @@ import {EventsService} from '../../services/events.service';
 import {Router} from '@angular/router';
 import {AlertService} from '../../services/alert.service';
 import {Event} from '../../models/event';
-import {Error} from '../../models/error';
 import {HttpErrorResponse} from '@angular/common/http';
 
 @Component({
@@ -63,4 +62,5 @@ export class AddEventComponent implements OnInit {
       }
     );
   }
+
 }

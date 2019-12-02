@@ -63,7 +63,7 @@ public class EventResource {
         }
         createdEvents.addAll(sharedEvents);
         //Sorting the combined list.
-        createdEvents.sort((o1, o2) -> o1.getStartTime().compareTo(o2.getEndTime()));
+        createdEvents.sort(Comparator.comparing(Event::getStartTime));
 
         return createdEvents;
     }
@@ -81,61 +81,23 @@ public class EventResource {
             String search, Principal principal) {
         User user = userRepository.findByUsername(principal.getName());
         List<Event> archivedEvents;
+        List<Event> sharedArchivedEvents;
         //We have passed a search parameter
         if (search != null) {
             archivedEvents = eventRepository.
                     findAllByCreatedByAndTitleLikeAndStatusOrderByStartTimeAsc(pageable, user, search, false);
-        } else {
-            archivedEvents = eventRepository.findAllByCreatedByAndStatusOrderByStartTimeAsc(pageable, user, false);
-        }
-        return archivedEvents;
-    }
-
-    /**
-     * Get all events shared and not marked archived
-     *
-     * @param pageable
-     * @param search
-     * @param principal
-     * @return events
-     */
-    @GetMapping("/shared")
-    public List<Event> getSharedEvents(Pageable pageable, @RequestParam(value = "search", required = false)
-            String search, Principal principal) {
-        User user = userRepository.findByUsername(principal.getName());
-        List<Event> sharedEvents;
-        //We have passed a search parameter
-        if (search != null) {
-            sharedEvents = eventRepository.
-                    findAllBySharedUsersIsAndTitleLikeOrderByStartTimeAsc(pageable, user.getId(), search, true);
-        } else {
-            sharedEvents = eventRepository.findAllBySharedUsersIsOrderByStartTimeAsc(pageable, user.getId(), true);
-        }
-        return sharedEvents;
-    }
-
-    /**
-     * Get all events shared and marked archived
-     *
-     * @param pageable
-     * @param search
-     * @param principal
-     * @return events
-     */
-    @GetMapping("/shared/archive")
-    public List<Event> getSharedAndArchivedEvents(Pageable pageable, @RequestParam(value = "search", required = false)
-            String search, Principal principal) {
-        User user = userRepository.findByUsername(principal.getName());
-        //We have passed a search parameter
-        List<Event> sharedArchivedEvents;
-        if (search != null) {
             sharedArchivedEvents = eventRepository.
                     findAllBySharedUsersIsAndTitleLikeOrderByStartTimeAsc(pageable, user.getId(), search, false);
         } else {
+            archivedEvents = eventRepository.findAllByCreatedByAndStatusOrderByStartTimeAsc(pageable, user, false);
             sharedArchivedEvents = eventRepository.findAllBySharedUsersIsOrderByStartTimeAsc(pageable, user.getId(),
                     false);
         }
-        return sharedArchivedEvents;
+        archivedEvents.addAll(sharedArchivedEvents);
+        //Sorting the combined list
+        archivedEvents.sort(Comparator.comparing(Event::getStartTime));
+
+        return archivedEvents;
     }
 
     /**

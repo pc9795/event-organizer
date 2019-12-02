@@ -2,6 +2,7 @@
   <a routerLink="/" class="navbar-brand">Event organizer</a>
   <div class="navbar-nav">
     <a class="nav-item nav-link" routerLink="/" *ngIf="currentUser">Home</a>
+    <a class="nav-item nav-link" routerLink="/archived" *ngIf="currentUser">Archived</a>
     <a class="nav-item nav-link" (click)="logout()" *ngIf="currentUser">Logout</a>
   </div>
 </nav>

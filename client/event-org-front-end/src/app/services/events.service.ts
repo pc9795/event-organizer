@@ -18,14 +18,6 @@ export class EventsService {
     return this.httpClient.get('http://localhost:8080/api/v1/events/archive', {withCredentials: true});
   }
 
-  getSharedEvents() {
-    return this.httpClient.get('http://localhost:8080/api/v1/events/shared', {withCredentials: true});
-  }
-
-  getSharedAndArchivedEvents() {
-    return this.httpClient.get('http://localhost:8080/api/v1/events/shared/archive', {withCredentials: true});
-  }
-
   getEvent(eventId: number) {
     return this.httpClient.get(`http://localhost:8080/api/v1/events/${eventId}`, {withCredentials: true});
   }
@@ -63,11 +55,11 @@ export class EventsService {
   }
 
   unshareEvent(eventId: number, userId: number) {
-    return this.httpClient.delete(`http://localhost:8080/api/v1/events/${eventId}/share/${userId}`, {withCredentials: true});
+    return this.httpClient.delete(`http://localhost:8080/api/v1/events/${eventId}/unshare/${userId}`, {withCredentials: true});
   }
 
   unshareEventWithCurrentUser(eventId: number) {
-    return this.httpClient.delete(`http://localhost:8080/api/v1/events/${eventId}/share/`, {withCredentials: true});
+    return this.httpClient.delete(`http://localhost:8080/api/v1/events/${eventId}/unshare/`, {withCredentials: true});
   }
 
 }
