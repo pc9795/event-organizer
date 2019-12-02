@@ -13,7 +13,6 @@ import service.event_org.utils.Constants;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Created By: Prashant Chaubey

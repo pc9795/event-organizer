@@ -3,8 +3,8 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {UsersService} from '../../services/users.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {AlertService} from '../../services/alert.service';
-import {Error} from '../../models/error';
 import {User} from '../../models/user';
+import {HttpErrorResponse} from '@angular/common/http';
 
 @Component({
   selector: 'app-register',
@@ -17,7 +17,7 @@ export class RegisterComponent implements OnInit {
   loading = false;
 
   constructor(private formBuilder: FormBuilder, private userService: UsersService, private router: Router,
-              private route: ActivatedRoute, private alertService: AlertService) {
+              private alertService: AlertService) {
   }
 
   // getter for easy access to form fields
@@ -52,8 +52,8 @@ export class RegisterComponent implements OnInit {
       data => {
         this.alertService.success('Registration successful! Please Log in to continue', true);
         this.router.navigate(['/'])
-      }, error => {
-        this.alertService.error(error.error.error);
+      }, (error: HttpErrorResponse) => {
+        this.alertService.error(error);
         this.loading = false;
       }
     );

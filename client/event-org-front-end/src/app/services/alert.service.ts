@@ -3,6 +3,7 @@ import {Subject} from 'rxjs/internal/Subject';
 import {NavigationStart, Router} from '@angular/router';
 import {Observable} from 'rxjs/internal/Observable';
 import {Error} from '../models/error';
+import {HttpErrorResponse} from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -33,9 +34,14 @@ export class AlertService {
     this.subject.next({type: 'success', text: message});
   }
 
-  error(error: Error, keepAfterNavigationChange = false) {
+  error(error: HttpErrorResponse, keepAfterNavigationChange = false) {
     this.keepAfterNavigationChange = keepAfterNavigationChange;
-    this.subject.next({type: 'error', text: error.message});
+    //Coupled to the error structure of the code.
+    if (error && error.error && error.error.error && error.error.error.message) {
+      this.subject.next({type: 'error', text: error.error.error.message});
+    } else {
+      this.subject.next({type: 'error', text: 'Something bad happened!'});
+    }
   }
 
   getMessage(): Observable<any> {

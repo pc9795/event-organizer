@@ -15,6 +15,8 @@ import service.event_org.repositories.UserRepository;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,13 +50,21 @@ public class EventResource {
                                        Principal principal) {
         User user = userRepository.findByUsername(principal.getName());
         List<Event> createdEvents;
+        List<Event> sharedEvents;
         //We have passed a search parameter
         if (search != null) {
             createdEvents = eventRepository.
                     findAllByCreatedByAndTitleLikeAndStatusOrderByStartTimeAsc(pageable, user, search, true);
+            sharedEvents = eventRepository.
+                    findAllBySharedUsersIsAndTitleLikeOrderByStartTimeAsc(pageable, user.getId(), search, true);
         } else {
             createdEvents = eventRepository.findAllByCreatedByAndStatusOrderByStartTimeAsc(pageable, user, true);
+            sharedEvents = eventRepository.findAllBySharedUsersIsOrderByStartTimeAsc(pageable, user.getId(), true);
         }
+        createdEvents.addAll(sharedEvents);
+        //Sorting the combined list.
+        createdEvents.sort((o1, o2) -> o1.getStartTime().compareTo(o2.getEndTime()));
+
         return createdEvents;
     }
 
@@ -195,7 +205,7 @@ public class EventResource {
         Event dbEvent = eventRepository.findById(eventId);
         if (dbEvent == null) {
             throw new ResourceNotFoundException(String.format("Event id:%s", eventId));
-            }
+        }
         User user = userRepository.findByUsername(principal.getName());
         //Check event is created by current user
         if (!dbEvent.getCreatedBy().getUsername().equals(user.getUsername())) {

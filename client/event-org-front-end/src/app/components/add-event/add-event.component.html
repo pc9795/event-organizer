@@ -1,0 +1,45 @@
+<div class="container">
+  <div class="row mt-5">
+    <div class="col-6">
+      <h3 class="text-secondary text-capitalize">Create a new event</h3>
+    </div>
+  </div>
+  <div class="row mt-3">
+    <form class="col-4" (ngSubmit)="onSubmit()" [formGroup]="eventForm">
+
+      <input type="text" placeholder="Title" class="form-control mt-2" formControlName="title"
+             [ngClass]="{ 'is-invalid': submitted && f.title.errors }" required>
+      <div *ngIf="submitted && f.title.errors" class="invalid-feedback">
+        <div *ngIf="f.title.errors.required">Title is required</div>
+        <div *ngIf="f.title.errors.minlength">Title should be greater than
+          {{f.title.errors.minlength.requiredLength}} characters
+        </div>
+        <div *ngIf="f.title.errors.maxlength">Title should be greater than
+          {{f.title.errors.maxlength.requiredLength}} characters
+        </div>
+      </div>
+
+      <input type="datetime-local" placeholder="Title" class="form-control mt-2" formControlName="startTime"
+             [ngClass]="{ 'is-invalid': submitted && f.startTime.errors }" required>
+      <div *ngIf="submitted && f.startTime.errors" class="invalid-feedback">
+        <div *ngIf="f.startTime.errors.required">Start time is required</div>
+      </div>
+
+      <input type="datetime-local" placeholder="Title" class="form-control mt-2" formControlName="endTime"
+             [ngClass]="{ 'is-invalid': submitted && f.endTime.errors }" required>
+      <div *ngIf="submitted && f.endTime.errors" class="invalid-feedback">
+        <div *ngIf="f.endTime.errors.required">End time is required</div>
+        <div *ngIf="f.endTime.errors.invalid">End time can't be less than start time</div>
+      </div>
+
+      <input type="text" placeholder="Location" class="form-control mt-2" formControlName="location"
+             [ngClass]="{ 'is-invalid': submitted && f.location.errors }">
+
+      <textarea rows="5" placeholder="Description" class="form-control mt-2" formControlName="description"
+                [ngClass]="{ 'is-invalid': submitted && f.description.errors }"></textarea>
+
+
+      <button [disabled]="loading" class="btn btn-success form-control mt-2">Add Event</button>
+    </form>
+  </div>
+</div>

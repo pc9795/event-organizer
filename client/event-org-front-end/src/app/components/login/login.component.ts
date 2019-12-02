@@ -50,7 +50,7 @@ export class LoginComponent implements OnInit {
         data => {
           this.router.navigate([this.returnUrl]);
         }, (error: HttpErrorResponse) => {
-          this.alertService.error(error.error.error);
+          this.alertService.error(error);
           this.loading = false;
         });
   }
