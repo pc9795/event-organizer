@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
-import {User} from "./models/user";
-import {AuthenticationService} from "./services/authentication.service";
-import {Router} from "@angular/router";
+import {User} from './models/user';
+import {AuthenticationService} from './services/authentication.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -17,8 +17,29 @@ export class AppComponent {
     });
   }
 
+  /**
+   * Log out
+   */
   logout() {
     this.authenticationService.logout();
     this.router.navigate(['/login']);
+  }
+
+  //Methods to bypass angular component reuse.
+  getHome() {
+    this.router.navigateByUrl('/createEvent', {skipLocationChange: true}).then(
+      () => {
+        this.router.navigate(['/']);
+      }
+    );
+  }
+
+  //Methods to bypass angular component reuse.
+  getArchived() {
+    this.router.navigateByUrl('/createEvent', {skipLocationChange: true}).then(
+      () => {
+        this.router.navigate(['/archived']);
+      }
+    );
   }
 }

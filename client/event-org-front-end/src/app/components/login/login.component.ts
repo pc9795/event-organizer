@@ -6,13 +6,16 @@ import {first} from 'rxjs/operators';
 import {AlertService} from '../../services/alert.service';
 import {HttpErrorResponse} from '@angular/common/http';
 
+/**
+ * Component to handle login
+ */
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  loginForm: FormGroup;
+  loginForm: FormGroup; //Form object
   submitted = false;
   returnUrl: string;
   loading = false;
@@ -31,6 +34,7 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
+    //Initialize the form
     this.loginForm = this.formBuilder.group({
       username: ['', Validators.required],
       password: ['', Validators.required]
@@ -39,6 +43,7 @@ export class LoginComponent implements OnInit {
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   }
 
+  //Login
   onSubmit() {
     this.submitted = true;
     if (this.loginForm.invalid) {

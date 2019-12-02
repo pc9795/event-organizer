@@ -6,6 +6,9 @@ import {AlertService} from '../../services/alert.service';
 import {Event} from '../../models/event';
 import {HttpErrorResponse} from '@angular/common/http';
 
+/**
+ * Component to add a event.
+ */
 @Component({
   selector: 'app-add-event',
   templateUrl: './add-event.component.html',
@@ -26,6 +29,7 @@ export class AddEventComponent implements OnInit {
   }
 
   ngOnInit() {
+    //Initialize a form
     this.eventForm = this.formBuilder.group({
       title: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(50)]],
       description: ['', []],
@@ -35,11 +39,13 @@ export class AddEventComponent implements OnInit {
     });
   }
 
+  //Adds an event
   onSubmit() {
     this.submitted = true;
     let startTimeObj = new Date(this.eventForm.get('startTime').value);
     let endTimeObj = new Date(this.eventForm.get('endTime').value);
 
+    //Start date can't be greater than end time.
     if (startTimeObj > endTimeObj) {
       this.eventForm.get('endTime').setErrors({'invalid': 'Can\'t be less than start date'});
       return;
@@ -49,6 +55,7 @@ export class AddEventComponent implements OnInit {
       return;
     }
 
+    //Hits backend api to create event.
     this.loading = true;
     let event = new Event(-1, this.eventForm.get('title').value, this.eventForm.get('description').value,
       this.eventForm.get('location').value, this.eventForm.get('startTime').value, this.eventForm.get('endTime').value);
@@ -58,9 +65,9 @@ export class AddEventComponent implements OnInit {
         this.router.navigate(['/'])
       }, (error: HttpErrorResponse) => {
         this.alertService.error(error);
-        this.loading = false;
       }
     );
+    this.loading = false;
   }
 
 }

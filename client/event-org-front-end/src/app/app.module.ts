@@ -35,10 +35,6 @@ import {AppRoutingModule} from './app-routing.module';
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true}
-    // {
-    //   provide: RouteReuseStrategy,
-    //   useClass: CustomRouteReuseStrategy
-    // }
   ],
   bootstrap: [AppComponent]
 })

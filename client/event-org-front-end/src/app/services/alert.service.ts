@@ -2,9 +2,11 @@ import {Injectable} from '@angular/core';
 import {Subject} from 'rxjs/internal/Subject';
 import {NavigationStart, Router} from '@angular/router';
 import {Observable} from 'rxjs/internal/Observable';
-import {Error} from '../models/error';
 import {HttpErrorResponse} from '@angular/common/http';
 
+/**
+ * Provide a unified alert interface to the application.
+ */
 @Injectable({
   providedIn: 'root'
 })
@@ -29,11 +31,21 @@ export class AlertService {
     )
   }
 
+  /**
+   * Show success messages
+   * @param {string} message
+   * @param {boolean} keepAfterNavigationChange
+   */
   success(message: string, keepAfterNavigationChange = false) {
     this.keepAfterNavigationChange = keepAfterNavigationChange;
     this.subject.next({type: 'success', text: message});
   }
 
+  /**
+   * Show error messages
+   * @param {HttpErrorResponse} error
+   * @param {boolean} keepAfterNavigationChange
+   */
   error(error: HttpErrorResponse, keepAfterNavigationChange = false) {
     this.keepAfterNavigationChange = keepAfterNavigationChange;
     //Coupled to the error structure of the code.
@@ -44,6 +56,10 @@ export class AlertService {
     }
   }
 
+  /**
+   * Get the message
+   * @returns {Observable<any>}
+   */
   getMessage(): Observable<any> {
     return this.subject.asObservable();
   }

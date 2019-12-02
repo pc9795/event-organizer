@@ -1,18 +1,21 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {UsersService} from '../../services/users.service';
-import {ActivatedRoute, Router} from '@angular/router';
+import {Router} from '@angular/router';
 import {AlertService} from '../../services/alert.service';
 import {User} from '../../models/user';
 import {HttpErrorResponse} from '@angular/common/http';
 
+/**
+ * Component to handle user registration
+ */
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent implements OnInit {
-  registerForm: FormGroup;
+  registerForm: FormGroup; //Form object
   submitted = false;
   loading = false;
 
@@ -26,6 +29,7 @@ export class RegisterComponent implements OnInit {
   }
 
   ngOnInit() {
+    //Initialize the form
     this.registerForm = this.formBuilder.group({
       username: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(20)]],
       email: ['', [Validators.required, Validators.email]],
@@ -34,8 +38,10 @@ export class RegisterComponent implements OnInit {
     });
   }
 
+  //Submit a user registration
   onSubmit() {
     this.submitted = true;
+    //confirm passwords
     if (this.registerForm.get('password').value !== this.registerForm.get('passwordConfirm').value) {
       this.registerForm.get('passwordConfirm').setErrors({notmatch: 'Passwords don\'t match'})
       return;
@@ -45,6 +51,7 @@ export class RegisterComponent implements OnInit {
       return;
     }
 
+    //Submit details to server.
     this.loading = true;
     let user = new User(-1, this.registerForm.get('username').value, this.registerForm.get('email').value,
       this.registerForm.get('passwordConfirm').value);
@@ -54,8 +61,8 @@ export class RegisterComponent implements OnInit {
         this.router.navigate(['/'])
       }, (error: HttpErrorResponse) => {
         this.alertService.error(error);
-        this.loading = false;
       }
     );
+    this.loading = false;
   }
 }

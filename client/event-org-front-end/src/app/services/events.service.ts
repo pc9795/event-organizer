@@ -2,6 +2,9 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Event} from '../models/event';
 
+/**
+ * Interacts with server to get event REST resource
+ */
 @Injectable({
   providedIn: 'root'
 })

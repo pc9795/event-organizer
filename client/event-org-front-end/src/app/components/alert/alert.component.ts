@@ -1,7 +1,10 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Subscription} from "rxjs/internal/Subscription";
-import {AlertService} from "../../services/alert.service";
+import {Subscription} from 'rxjs/internal/Subscription';
+import {AlertService} from '../../services/alert.service';
 
+/**
+ * A generic component to show error messages.
+ */
 @Component({
   selector: 'app-alert',
   templateUrl: './alert.component.html',

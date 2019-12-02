@@ -6,6 +6,9 @@ import {HttpClient} from '@angular/common/http';
 import {map} from 'rxjs/operators';
 import {AlertService} from './alert.service';
 
+/**
+ * For authentication related methods
+ */
 @Injectable({
   providedIn: 'root'
 })
@@ -22,6 +25,9 @@ export class AuthenticationService {
     return this.currentUserSubject.value;
   }
 
+  /**
+   * Log out
+   */
   logout() {
     localStorage.removeItem('currentUser');
     this.currentUserSubject.next(null);
@@ -33,12 +39,19 @@ export class AuthenticationService {
     );
   }
 
+  /**
+   * Login
+   * @param {string} username
+   * @param {string} password
+   * @returns {Observable<any>}
+   */
   login(username: string, password: string) {
     return this.http.post('http://localhost:8080/login', {
       'username': username,
       'password': password
     }, {withCredentials: true}).pipe(map(user => {
       if (user) {
+        //Cache the user in local storage.
         localStorage.setItem('currentUser', JSON.stringify(user));
         this.currentUserSubject.next(<User>user);
       }
