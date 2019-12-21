@@ -5,6 +5,7 @@ import {Observable} from 'rxjs/internal/Observable';
 import {HttpClient} from '@angular/common/http';
 import {map} from 'rxjs/operators';
 import {AlertService} from './alert.service';
+import {environment} from '../../environments/environment';
 
 /**
  * For authentication related methods
@@ -31,7 +32,7 @@ export class AuthenticationService {
   logout() {
     localStorage.removeItem('currentUser');
     this.currentUserSubject.next(null);
-    this.http.get('http://localhost:8080/logout', {withCredentials: true}).subscribe(
+    this.http.get(`${environment.server}logout`, {withCredentials: true}).subscribe(
       data => {
       }, error => {
         this.alertService.error(error);
@@ -41,19 +42,16 @@ export class AuthenticationService {
 
   /**
    * Login
-   * @param {string} username
-   * @param {string} password
-   * @returns {Observable<any>}
    */
   login(username: string, password: string) {
-    return this.http.post('http://localhost:8080/login', {
-      'username': username,
-      'password': password
+    return this.http.post(`${environment.server}login`, {
+      username,
+      password
     }, {withCredentials: true}).pipe(map(user => {
       if (user) {
-        //Cache the user in local storage.
+        // Cache the user in local storage.
         localStorage.setItem('currentUser', JSON.stringify(user));
-        this.currentUserSubject.next(<User>user);
+        this.currentUserSubject.next(user as User);
       }
       return user;
     }));

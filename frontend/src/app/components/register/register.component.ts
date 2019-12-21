@@ -15,7 +15,7 @@ import {HttpErrorResponse} from '@angular/common/http';
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent implements OnInit {
-  registerForm: FormGroup; //Form object
+  registerForm: FormGroup; // Form object
   submitted = false;
   loading = false;
 
@@ -29,7 +29,7 @@ export class RegisterComponent implements OnInit {
   }
 
   ngOnInit() {
-    //Initialize the form
+    // Initialize the form
     this.registerForm = this.formBuilder.group({
       username: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(20)]],
       email: ['', [Validators.required, Validators.email]],
@@ -38,10 +38,10 @@ export class RegisterComponent implements OnInit {
     });
   }
 
-  //Submit a user registration
+  // Submit a user registration
   onSubmit() {
     this.submitted = true;
-    //confirm passwords
+    // confirm passwords
     if (this.registerForm.get('password').value !== this.registerForm.get('passwordConfirm').value) {
       this.registerForm.get('passwordConfirm').setErrors({notmatch: 'Passwords don\'t match'})
       return;
@@ -51,9 +51,9 @@ export class RegisterComponent implements OnInit {
       return;
     }
 
-    //Submit details to server.
+    // Submit details to server.
     this.loading = true;
-    let user = new User(-1, this.registerForm.get('username').value, this.registerForm.get('email').value,
+    const user = new User(-1, this.registerForm.get('username').value, this.registerForm.get('email').value,
       this.registerForm.get('passwordConfirm').value);
     this.userService.register(user).subscribe(
       data => {

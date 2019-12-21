@@ -6,7 +6,8 @@
 
     <groupId>event_organizer</groupId>
     <artifactId>event_organizer</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
+    <packaging>jar</packaging>
 
     <!--Spring boot parent dependency-->
     <parent>
@@ -76,6 +77,13 @@
                 <configuration>
                     <source>8</source>
                     <target>8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>service.event_org.Main</mainClass>
                 </configuration>
             </plugin>
         </plugins>

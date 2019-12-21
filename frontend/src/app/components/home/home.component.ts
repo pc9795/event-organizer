@@ -22,27 +22,27 @@ export class HomeComponent implements OnInit, OnDestroy {
   currentUserSubscription: Subscription;
   events: Event[];
   refDate: Date = new Date();
-  searched: boolean = false;
+  searched = false;
   options = new Map();
   canShare = true;
 
   constructor(private authenticationService: AuthenticationService, private userService: UsersService,
               private eventService: EventsService, private alertService: AlertService, private router: Router) {
 
-    //Subscribe to user
+    // Subscribe to user
     this.currentUserSubscription = this.authenticationService.currentUser.subscribe(
       user => {
         this.currentUser = user;
       }
     );
 
-    //Get the passed state from other component.
-    let state = this.router.getCurrentNavigation().extras.state;
+    // Get the passed state from other component.
+    const state = this.router.getCurrentNavigation().extras.state;
     this.searched = !!(state && state.searchStr);
 
-    //Get active events.
+    // Get active events.
     this.eventService.getActiveEvents(state ? state.searchStr : null).subscribe(data => {
-      this.events = <Event[]>data;
+      this.events = data as Event[];
       this.events.map(event => {
         event.startTime = new Date(event.startTime);
         event.endTime = new Date(event.endTime);
@@ -50,7 +50,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       });
     }, (error: HttpErrorResponse) => {
       this.alertService.error(error);
-    })
+    });
   }
 
   ngOnInit() {
@@ -60,7 +60,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.currentUserSubscription.unsubscribe();
   }
 
-  //Get  the length of an object
+  // Get  the length of an object
   objLen(obj): number {
     if (!obj) {
       return 0;
@@ -68,7 +68,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     return Object.keys(obj).length;
   }
 
-  //Check the status of event in terms of is it finished, yet to start or in progress.
+  // Check the status of event in terms of is it finished, yet to start or in progress.
   checkEventIsFinished(startDate: Date, endDate: Date): number {
     if (this.refDate > startDate && this.refDate < endDate) {
       return 0;
@@ -79,7 +79,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
 
-  //Get truncated representation of a string capped to a size.
+  // Get truncated representation of a string capped to a size.
   truncatedStr(str: string, size: number): string {
     if (str == null) {
       return '';
@@ -90,7 +90,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     return str;
   }
 
-  //A helper method to get personalized string if the given user is logged in one.
+  // A helper method to get personalized string if the given user is logged in one.
   getCreatedBy(user: User): string {
     if (this.currentUser.username === user.username) {
       return 'You';
@@ -98,12 +98,12 @@ export class HomeComponent implements OnInit, OnDestroy {
     return user.username;
   }
 
-  //Check whether given user is logged in user.
+  // Check whether given user is logged in user.
   isCreatedByMe(createdBy: User): boolean {
     return this.currentUser.username === createdBy.username;
   }
 
-  //Refresh hack
+  // Refresh hack
   refresh() {
     this.router.navigateByUrl('/createEvent', {skipLocationChange: true}).then(
       () => {
@@ -112,18 +112,16 @@ export class HomeComponent implements OnInit, OnDestroy {
     );
   }
 
-  //Delete event
+  // Delete event
   deleteEvent(eventId: number, mine: boolean) {
     if (confirm('Are you sure to delete this Event')) {
-      //Delete events created by logged in user.
+      // Delete events created by logged in user.
       if (mine) {
         this.eventService.deleteEvent(eventId).subscribe(data => {
           this.alertService.success('Event deleted successfully!', true);
           this.refresh();
         }, error => this.alertService.error(error));
-      }
-      //Delete events shared by others. It will not actually delete the event it only deletes the relationship.
-      else {
+      } else {
         this.eventService.unshareEventWithCurrentUser(eventId).subscribe(data => {
           this.alertService.success('Event unshared successfully!', true);
           this.refresh();
@@ -132,18 +130,17 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
   }
 
-  //Archives an event.
+  // Archives an event.
   archiveEvent(eventId: number, mine: boolean) {
     if (confirm('Are you sure to archive this Event')) {
       if (mine) {
-        //Archive event created by logged in user.
+        // Archive event created by logged in user.
         this.eventService.archiveEvent(eventId).subscribe(data => {
           this.alertService.success('Event archived successfully!', true);
           this.refresh();
         }, error => this.alertService.error(error));
-      }
-      //Archive event shared by others. It will not actually archive the original event it only manipulates the relationship.
-      else {
+      } else {
+        // Archive event shared by others. It will not actually archive the original event it only manipulates the relationship.
         this.eventService.archiveSharedEvent(eventId).subscribe(data => {
           this.alertService.success('Event unshared successfully!', true);
           this.refresh();
@@ -152,25 +149,25 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
   }
 
-  //search an event with title.
+  // search an event with title.
   search(searchStr: string) {
     this.router.navigateByUrl('/createEvent', {skipLocationChange: true}).then(
       () => {
-        this.router.navigate(['/'], {state: {searchStr: searchStr}});
+        this.router.navigate(['/'], {state: {searchStr}});
       }
     );
   }
 
-  //Track record of selected events
+  // Track record of selected events
   updateOptions(eventId) {
     this.options.set(eventId, !this.options.get(eventId));
   }
 
-  //Share selected events with given user with username.
+  // Share selected events with given user with username.
   share(username: string) {
     this.canShare = false;
-    let eventIds: string[] = [];
-    //Get all the selected event ids.
+    const eventIds: string[] = [];
+    // Get all the selected event ids.
     this.options.forEach((value: boolean, key: string) => {
       if (value) {
         eventIds.push(key);
@@ -183,7 +180,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       }, error => {
         this.alertService.error(error);
       }
-    )
+    );
     this.canShare = true;
   }
 }

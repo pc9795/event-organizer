@@ -13,7 +13,7 @@ export class AppComponent {
 
   constructor(private router: Router, private authenticationService: AuthenticationService) {
     this.authenticationService.currentUser.subscribe(user => {
-      this.currentUser = user
+      this.currentUser = user;
     });
   }
 
@@ -25,7 +25,7 @@ export class AppComponent {
     this.router.navigate(['/login']);
   }
 
-  //Methods to bypass angular component reuse.
+  // Methods to bypass angular component reuse.
   getHome() {
     this.router.navigateByUrl('/createEvent', {skipLocationChange: true}).then(
       () => {
@@ -34,7 +34,7 @@ export class AppComponent {
     );
   }
 
-  //Methods to bypass angular component reuse.
+  // Methods to bypass angular component reuse.
   getArchived() {
     this.router.navigateByUrl('/createEvent', {skipLocationChange: true}).then(
       () => {

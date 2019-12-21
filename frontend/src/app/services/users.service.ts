@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {User} from '../models/user';
+import {environment} from '../../environments/environment';
 
 /**
  * Interacts with server for user REST resource.
@@ -14,6 +15,6 @@ export class UsersService {
   }
 
   register(user: User) {
-    return this.httpClient.post('http://localhost:8080/api/v1/users/', user, {withCredentials: true});
+    return this.httpClient.post(`${environment.server}api/v1/users/`, user, {withCredentials: true});
   }
 }

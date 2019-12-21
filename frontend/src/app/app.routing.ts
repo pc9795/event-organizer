@@ -9,7 +9,6 @@ import {ArchivedComponent} from './components/archived/archived.component';
 
 /**
  * All the routesof the application.
- * @type {({path: string; component: HomeComponent; canActivate: AuthGuard[]} | {path: string; component: AddEventComponent; canActivate: AuthGuard[]} | {path: string; component: ArchivedComponent; canActivate: AuthGuard[]} | {path: string; component: ViewEventComponent; canActivate: AuthGuard[]} | {path: string; component: LoginComponent} | {path: string; component: RegisterComponent} | {path: string; redirectTo: string})[]}
  */
 const appRoutes: Routes = [
   {path: '', component: HomeComponent, canActivate: [AuthGuard]},

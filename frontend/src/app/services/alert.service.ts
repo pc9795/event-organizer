@@ -15,26 +15,24 @@ export class AlertService {
   private keepAfterNavigationChange = false;
 
   constructor(private router: Router) {
-    //Clear alert messages on route change
+    // Clear alert messages on route change
     router.events.subscribe(
       event => {
         if (event instanceof NavigationStart) {
           if (this.keepAfterNavigationChange) {
-            //only keep for a single location change
+            // only keep for a single location change
             this.keepAfterNavigationChange = false;
           } else {
-            //clear alert
+            // clear alert
             this.subject.next();
           }
         }
       }
-    )
+    );
   }
 
   /**
    * Show success messages
-   * @param {string} message
-   * @param {boolean} keepAfterNavigationChange
    */
   success(message: string, keepAfterNavigationChange = false) {
     this.keepAfterNavigationChange = keepAfterNavigationChange;
@@ -43,12 +41,10 @@ export class AlertService {
 
   /**
    * Show error messages
-   * @param {HttpErrorResponse} error
-   * @param {boolean} keepAfterNavigationChange
    */
   error(error: HttpErrorResponse, keepAfterNavigationChange = false) {
     this.keepAfterNavigationChange = keepAfterNavigationChange;
-    //Coupled to the error structure of the code.
+    // Coupled to the error structure of the code.
     if (error && error.error && error.error.error && error.error.error.message) {
       this.subject.next({type: 'error', text: error.error.error.message});
     } else {
@@ -58,7 +54,6 @@ export class AlertService {
 
   /**
    * Get the message
-   * @returns {Observable<any>}
    */
   getMessage(): Observable<any> {
     return this.subject.asObservable();
